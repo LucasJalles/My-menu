@@ -22,8 +22,8 @@ function handleCategoryClick(event) {
     const categoryId = card.dataset.categoryId;
     const categoryName = card.dataset.categoryName;
     Menu.fetchItems(categoryId).then(items => {
+        switchView('items-view'); // Mude a view ANTES de renderizar, para que a seta apareça
         renderCategoryItemsCarousel(categoryName, items);
-        switchView('items-view');
     }).catch(error => {
         console.error("Erro ao carregar itens da categoria:", error);
         showMessage('error', 'Não foi possível carregar os itens desta categoria.');
@@ -273,11 +273,9 @@ async function handleLoginModalSubmit(event) {
         DOM.modalPasswordInput.value = '';
 
         closeModal('login-modal');
-        // Após login, o usuário vai para o painel de administração
         switchView('admin-panel-view');
         Admin.initializeAdminPanel();
         
-        // Esconde o botão de Login e mostra o de Sair no dropdown (ou vice-versa)
         updateMoreOptionsButtonsVisibility(); 
 
     } else {
@@ -290,7 +288,6 @@ async function handleLoginModalSubmit(event) {
 
 function handleAuthPanelButtonClick() {
     console.log("eventHandlers.js: Botão Auth Panel clicado (dentro do dropdown).");
-    // Esconde o dropdown ao clicar no botão
     if (DOM.optionsDropdown?.classList.contains('show')) {
         DOM.optionsDropdown.classList.remove('show');
     }
@@ -307,18 +304,14 @@ function handleAuthPanelButtonClick() {
 
 function handleLogoutButtonClick() {
     console.log("eventHandlers.js: Botão de Logout clicado (dentro do dropdown).");
-    // Esconde o dropdown ao clicar no botão
     if (DOM.optionsDropdown?.classList.contains('show')) {
         DOM.optionsDropdown.classList.remove('show');
     }
 
     Auth.logout();
-    // Após logout, o usuário retorna ao cardápio público
     switchView('categories-view');
     showMessage('info', 'Você foi desconectado.');
-    // Atualiza a visibilidade dos botões no dropdown após logout
     updateMoreOptionsButtonsVisibility(); 
-    // Recarregar categorias para garantir o estado público (sem opções de admin)
     Menu.fetchCategories().then(categories => {
         renderCategories(categories);
     }).catch(error => {
@@ -327,25 +320,22 @@ function handleLogoutButtonClick() {
     });
 }
 
-// NOVO: Função para atualizar a visibilidade dos botões do dropdown
 export function updateMoreOptionsButtonsVisibility() {
     if (Auth.isAuthenticated()) {
-        DOM.authPanelButton.style.display = 'none'; // Esconde o botão de Login
-        DOM.logoutButton.style.display = 'block';   // Mostra o botão de Sair
+        DOM.authPanelButton.style.display = 'none';
+        DOM.logoutButton.style.display = 'block';
     } else {
-        DOM.authPanelButton.style.display = 'block'; // Mostra o botão de Login
-        DOM.logoutButton.style.display = 'none';   // Esconde o botão de Sair
+        DOM.authPanelButton.style.display = 'block';
+        DOM.logoutButton.style.display = 'none';
     }
 }
 
-// NOVO: Handler para o botão de 3 pontinhos
 function handleMoreOptionsButtonClick(event) {
-    event.stopPropagation(); // Impede que o clique se propague e feche o dropdown imediatamente
+    event.stopPropagation();
     DOM.optionsDropdown?.classList.toggle('show');
     console.log("DEBUG: Botão de 3 pontinhos clicado. Dropdown visível:", DOM.optionsDropdown?.classList.contains('show'));
 }
 
-// NOVO: Handler para fechar o dropdown ao clicar fora
 function handleDocumentClick(event) {
     if (DOM.optionsDropdown?.classList.contains('show') && !DOM.moreOptionsContainer?.contains(event.target)) {
         DOM.optionsDropdown.classList.remove('show');
@@ -360,13 +350,20 @@ export function initializeEventListeners() {
     console.log("eventHandlers.js: initializeEventListeners chamado.");
     DOM.loginForm?.addEventListener('submit', handleLoginModalSubmit);
     
-    // Adicionar listener ao novo botão de 3 pontinhos
     DOM.moreOptionsButton?.addEventListener('click', handleMoreOptionsButtonClick);
-    // Os listeners de authPanelButton e logoutButton agora apontam para os botões DENTRO do dropdown
     DOM.authPanelButton?.addEventListener('click', handleAuthPanelButtonClick);
     DOM.logoutButton?.addEventListener('click', handleLogoutButtonClick);
     
-    // O botão de adicionar categoria/item está no painel de admin, não precisa de 3 pontinhos
+    // Reativando listener para allBackButtons para a lógica do botão de voltar nas seções
+    DOM.allBackButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            if (DOM.optionsDropdown?.classList.contains('show')) {
+                DOM.optionsDropdown.classList.remove('show');
+            }
+            switchView(e.target.dataset.targetView);
+        });
+    });
+
     if (DOM.addCategoryButton) {
         DOM.addCategoryButton.addEventListener('click', Admin.handleAddCategory);
         console.log("eventHandlers.js: Listener para addCategoryButton anexado.");
@@ -411,24 +408,12 @@ export function initializeEventListeners() {
         if (event.target === DOM.loginModal) closeModal('login-modal');
         if (event.target.id === 'category-modal') closeModal('category-modal');
         if (event.target.id === 'item-modal') closeModal('item-modal');
-        // Novo: Fechar o dropdown de 3 pontinhos ao clicar fora
         handleDocumentClick(event);
-    });
-
-    DOM.allBackButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            // Esconde o dropdown de opções ao voltar para outras views
-            if (DOM.optionsDropdown?.classList.contains('show')) {
-                DOM.optionsDropdown.classList.remove('show');
-            }
-            switchView(e.target.dataset.targetView);
-        });
     });
 
     DOM.adminTabButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             console.log("eventHandlers.js: Aba Admin clicada:", e.target.dataset.targetTab);
-            // Esconde o dropdown de opções ao interagir com o painel de admin
             if (DOM.optionsDropdown?.classList.contains('show')) {
                 DOM.optionsDropdown.classList.remove('show');
             }
