@@ -1,5 +1,5 @@
 // Menu/js/menu.js
-import { getRestaurantSlugFromUrl } from './config.js';
+import { getRestaurantSlugFromUrl, BASE_API_DOMAIN } from './config.js'; // Importe BASE_API_DOMAIN
 import * as Auth from './auth.js'; 
 import * as UIRenderer from './uiRenderer.js'; 
 
@@ -7,9 +7,11 @@ const restaurantSlug = getRestaurantSlugFromUrl();
 let API_URL_FOR_RESTAURANT = '';
 
 if (restaurantSlug) {
-    API_URL_FOR_RESTAURANT = `http://127.0.0.1:8000/api/menu/${restaurantSlug}/`;
+    // Use BASE_API_DOMAIN
+    API_URL_FOR_RESTAURANT = `${BASE_API_DOMAIN}/api/menu/${restaurantSlug}/`; // Usa a nova constante
 } else {
     console.error("Erro: Slug do restaurante não encontrado na URL. Verifique o formato da URL (ex: /seu-restaurante-slug/index.html)");
+    // Se não há slug, a API_URL_FOR_RESTAURANT deve ser vazia para evitar chamadas quebradas.
 }
 
 let currentItemBeingCustomized = null;
@@ -21,6 +23,10 @@ let allItems = [];
 // --- FUNÇÕES DE API ---
 
 async function apiRequest(endpoint, method = 'GET', body = null, isFormData = false) { 
+    if (!API_URL_FOR_RESTAURANT) {
+        console.error("apiRequest: API_URL_FOR_RESTAURANT não definida. Não é possível fazer a requisição.");
+        throw new Error("API_URL_FOR_RESTAURANT não definida.");
+    }
     const url = `${API_URL_FOR_RESTAURANT}${endpoint}`;
     const headers = { ...Auth.getAuthHeader() }; 
 
@@ -61,10 +67,7 @@ async function apiRequest(endpoint, method = 'GET', body = null, isFormData = fa
 }
 
 export async function fetchCategories() {
-    if (!API_URL_FOR_RESTAURANT) {
-        console.error("API_URL_FOR_RESTAURANT não definida. Não é possível buscar categorias.");
-        return [];
-    }
+    // A verificação de API_URL_FOR_RESTAURANT já está em apiRequest
     try {
         const fetchedCategories = await apiRequest('categories/'); 
         console.log("DEBUG: fetchCategories retornou:", fetchedCategories); 
@@ -77,10 +80,7 @@ export async function fetchCategories() {
 }
 
 export async function fetchItems(categoryId = null, updateGlobalAllItems = true) { 
-    if (!API_URL_FOR_RESTAURANT) {
-        console.error("API_URL_FOR_RESTAURANT não definida. Não é possível buscar itens.");
-        return [];
-    }
+    // A verificação de API_URL_FOR_RESTAURANT já está em apiRequest
     let endpoint = 'items/';
     if (categoryId) {
         endpoint += `?category_id=${categoryId}`;
