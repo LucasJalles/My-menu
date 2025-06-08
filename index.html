@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Dinâmico Estilo Totem v2 - Revisado</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-main-row">
+            <div class="restaurant-info">
+                <img src="images/logo-restaurante.png" alt="Logo do Restaurante" class="restaurant-logo-bubble">
+                <h1>Nome do Restaurante</h1>
+            </div>
+            <div id="more-options-container" class="more-options-hidden">
+                <button id="more-options-button" aria-label="Mais opções">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <div id="options-dropdown" class="dropdown-content">
+                    <button id="auth-panel-button" class="info-button">Login</button>
+                    <button id="logout-button" class="danger-button">Sair</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-cart-summary-row">
+            <div id="cart-summary">
+                <img src="images/cart-icon.png" alt="Carrinho" id="cart-icon"/>
+                Carrinho: <span id="cart-count">0</span> itens - R$ <span id="cart-total-summary">0.00</span>
+            </div>
+        </div>
+        
+        <div class="header-view-cart-button-row">
+            <button id="view-cart-button">Ver Pedido</button>
+        </div>
+    </header>
+
+    <div id="feedback-messages-container"></div>
+
+    <main>
+        <section id="categories-view" class="view active-view">
+            <h2>Escolha uma Categoria</h2>
+            <div id="categories-container">
+                </div>
+        </section>
+
+        <section id="items-view" class="view">
+            <div class="section-header-with-back"> <button class="back-button" data-target-view="categories-view" aria-label="Voltar para Categorias">
+                    <i class="fas fa-arrow-left"></i> </button>
+                <h2 id="items-category-title"></h2>
+            </div>
+
+            <div id="items-carousel-container">
+                </div>
+
+            <div id="inline-customization-panel" class="inline-customization-panel-hidden">
+                <div class="panel-header">
+                    <h3 id="inline-custom-item-name">Personalize seu Produto</h3>
+                    <button id="close-inline-panel-button" aria-label="Fechar personalização">&times;</button>
+                </div>
+                <div class="panel-body">
+                    <div class="customization-content-wrapper">
+                        <div class="item-info-inline">
+                            <img id="inline-custom-item-image" src="" alt="Item selecionado">
+                            <p>Base: R$ <span id="inline-custom-item-base-price">0.00</span></p>
+                        </div>
+                        <div class="options-scroll-area">
+                            <div id="inline-default-ingredients-list" class="options-list-inline">
+                                <h4>Ingredientes Padrão:</h4>
+                                </div>
+                            <div id="inline-customizable-options-list" class="options-list-inline">
+                                <h4>Adicione ou Modifique:</h4>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="quantity-selector-inline">
+                        <label for="inline-item-quantity">Quantidade:</label>
+                        <button id="inline-decrease-item-quantity" aria-label="Diminuir quantidade do item">-</button>
+                        <input type="text" id="inline-item-quantity" value="1" readonly aria-live="polite">
+                        <button id="inline-increase-item-quantity" aria-label="Aumentar quantidade do item">+</button>
+                    </div>
+                    <p class="price-display-inline">Preço do Item: R$ <span id="inline-custom-item-unit-price">0.00</span></p>
+                    <p class="total-price-display-inline">Total deste Item: R$ <span id="inline-custom-item-total-price">0.00</span></p>
+                    <button id="inline-add-to-cart-button">Adicionar ao Pedido</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="admin-panel-view" class="view">
+            <div class="admin-panel-header">
+                <button class="back-button" data-target-view="categories-view" aria-label="Voltar ao Cardápio">
+                    <i class="fas fa-arrow-left"></i> </button>
+                <h3>Gerenciar Catálogo</h3>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-button active-tab" data-target-tab="manage-categories">Categorias</button>
+                <button class="admin-tab-button" data-target-tab="manage-items">Itens</button>
+            </div>
+
+            <div id="manage-categories" class="admin-tab-content active-tab-content">
+                <button id="add-category-button" class="success-button" style="margin-bottom: 1rem;">+ Adicionar Nova Categoria</button>
+                <div id="categories-admin-list">
+                    <p>Carregando categorias...</p>
+                </div>
+            </div>
+
+            <div id="manage-items" class="admin-tab-content">
+                <button id="add-item-button" class="success-button" style="margin-bottom: 1rem;">+ Adicionar Novo Item</button>
+                 <div id="items-admin-list">
+                    <p>Selecione uma categoria ou carregue todos os itens.</p>
+                </div>
+            </div>
+        </section>
+
+        <div id="cart-modal" class="modal">
+            <div class="modal-content cart-modal-content">
+                <span class="close-button" data-modal-id="cart-modal" aria-label="Fechar carrinho">&times;</span>
+                <h2>Seu Pedido</h2>
+                <div id="cart-items-detailed">
+                    <p>Seu carrinho está vazio.</p>
+                </div>
+                <div id="cart-total-detailed">
+                    <strong>Total Geral: R$ <span id="total-price-detailed">0.00</span></strong>
+                </div>
+                <button id="checkout-button-detailed">Finalizar Pedido (WhatsApp)</button>
+                <button id="clear-cart-button">Limpar Carrinho</button>
+            </div>
+        </div>
+
+        <div id="login-modal" class="modal">
+            <div class="modal-content login-modal-content">
+                <span class="close-button" data-modal-id="login-modal" aria-label="Fechar login">&times;</span>
+                <h2>Acesso ao Painel de Controle</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="modal-username">Usuário:</label>
+                        <input type="text" id="modal-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-password">Senha:</label>
+                        <input type="password" id="modal-password" name="password" required>
+                    </div>
+                    <button type="submit" id="modal-login-button">Entrar</button>
+                    <p id="modal-login-message" class="error-message"></p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Carregando...</p>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
