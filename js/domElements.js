@@ -30,8 +30,9 @@ export const cartCountSummary = document.getElementById('cart-count');
 export const cartTotalSummary = document.getElementById('cart-total-summary');
 
 export const allModals = document.querySelectorAll('.modal');
+// Reativando allBackButtons para a lógica do botão de voltar nas seções
 export const allCloseButtons = document.querySelectorAll('.close-button');
-export const allBackButtons = document.querySelectorAll('.back-button');
+export const allBackButtons = document.querySelectorAll('.back-button'); 
 
 // ELEMENTOS PARA O LOGIN / PAINEL DE ADMINISTRAÇÃO DO CLIENTE
 export const loginModal = document.getElementById('login-modal');
