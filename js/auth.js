@@ -1,9 +1,9 @@
 // Menu/js/auth.js
-import { getRestaurantSlugFromUrl } from './config.js';
-import * as UIRenderer from './uiRenderer.js'; // Importado para usar showMessage
+import { getRestaurantSlugFromUrl, BASE_API_DOMAIN } from './config.js'; // Importe BASE_API_DOMAIN
+import * as UIRenderer from './uiRenderer.js';
 
-// URL do endpoint de autenticação JWT no seu Django
-const AUTH_API_BASE_URL = `http://127.0.0.1:8000/api/token/`; // Endpoint para obter tokens
+// Use BASE_API_DOMAIN
+const AUTH_API_BASE_URL = `${BASE_API_DOMAIN}/api/token/`; // Usa a nova constante
 
 export async function login(username, password) {
     try {
@@ -24,13 +24,11 @@ export async function login(username, password) {
             return { success: true };
         } else {
             console.error("Erro no login:", data);
-            // Usando showMessage para exibir o erro
-            // UIRenderer.showMessage('error', data.detail || "Credenciais inválidas."); // Esta mensagem será exibida pelo eventHandlers
             return { success: false, message: data.detail || "Credenciais inválidas." };
         }
     } catch (error) {
         console.error("Erro de rede ou ao tentar login:", error);
-        UIRenderer.showMessage('error', "Não foi possível conectar ao servidor de autenticação."); // Mensagem toast para erro de rede
+        UIRenderer.showMessage('error', "Não foi possível conectar ao servidor de autenticação.");
         return { success: false, message: "Não foi possível conectar ao servidor." };
     }
 }
@@ -39,7 +37,6 @@ export function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     console.log("Logout realizado. Tokens removidos.");
-    // showMessage para logout já é feito no eventHandlers
 }
 
 export function isAuthenticated() {
@@ -58,7 +55,7 @@ export async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) {
         console.warn("Nenhum refresh token encontrado. Requer login.");
-        UIRenderer.showMessage('info', 'Sua sessão expirou. Por favor, faça login novamente.'); // Mensagem toast para expiração
+        UIRenderer.showMessage('info', 'Sua sessão expirou. Por favor, faça login novamente.');
         return false;
     }
 
@@ -79,14 +76,14 @@ export async function refreshAccessToken() {
             return true;
         } else {
             console.error("Falha ao renovar token. Requer novo login.", data);
-            logout(); // Remove tokens inválidos
-            UIRenderer.showMessage('error', data.detail || 'Sua sessão expirou. Por favor, faça login novamente.'); // Mensagem toast
+            logout();
+            UIRenderer.showMessage('error', data.detail || 'Sua sessão expirou. Por favor, faça login novamente.');
             return false;
         }
     } catch (error) {
         console.error("Erro de rede ao renovar token:", error);
         logout();
-        UIRenderer.showMessage('error', 'Erro de conexão ao tentar renovar sua sessão.'); // Mensagem toast para erro de rede
+        UIRenderer.showMessage('error', 'Erro de conexão ao tentar renovar sua sessão.');
         return false;
     }
 }
