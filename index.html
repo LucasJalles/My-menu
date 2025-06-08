@@ -6,6 +6,7 @@
     <title>Cardápio Dinâmico Estilo Totem v2 - Revisado</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -33,6 +34,9 @@
         </div>
         
         <div class="header-view-cart-button-row">
+            <button id="back-arrow-button-placeholder" class="header-action-button back-arrow-hidden" data-target-view="categories-view" aria-label="Voltar">
+                <i class="fas fa-arrow-left"></i>
+            </button>
             <button id="view-cart-button">Ver Pedido</button>
         </div>
     </header>
@@ -47,8 +51,10 @@
         </section>
 
         <section id="items-view" class="view">
-            <div class="section-header-with-back"> <button class="back-button" data-target-view="categories-view" aria-label="Voltar para Categorias">
-                    <i class="fas fa-arrow-left"></i> </button>
+            <div class="section-header-with-back">
+                <button class="back-button" data-target-view="categories-view" aria-label="Voltar para Categorias">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
                 <h2 id="items-category-title"></h2>
             </div>
 
@@ -93,7 +99,8 @@
         <section id="admin-panel-view" class="view">
             <div class="admin-panel-header">
                 <button class="back-button" data-target-view="categories-view" aria-label="Voltar ao Cardápio">
-                    <i class="fas fa-arrow-left"></i> </button>
+                    <i class="fas fa-arrow-left"></i>
+                </button>
                 <h3>Gerenciar Catálogo</h3>
             </div>
 
